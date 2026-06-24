@@ -7,12 +7,14 @@ import com.collegemate.model.ConsultationSession.SessionType;
 import com.collegemate.model.User;
 import com.collegemate.model.WalletTransaction;
 import com.collegemate.model.WalletTransaction.TransactionType;
+import com.collegemate.model.ChatMessage;
 import com.collegemate.repository.AdvisorProfileRepository;
 import com.collegemate.repository.ConsultationSessionRepository;
 import com.collegemate.repository.UserRepository;
 import com.collegemate.repository.WalletTransactionRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -31,16 +33,20 @@ public class SessionController {
     private final UserRepository userRepository;
     private final AdvisorProfileRepository advisorProfileRepository;
     private final WalletTransactionRepository walletTransactionRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public SessionController(ConsultationSessionRepository sessionRepository,
                              UserRepository userRepository,
                              AdvisorProfileRepository advisorProfileRepository,
-                             WalletTransactionRepository walletTransactionRepository) {
+                             WalletTransactionRepository walletTransactionRepository,
+                             SimpMessagingTemplate messagingTemplate) {
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.advisorProfileRepository = advisorProfileRepository;
         this.walletTransactionRepository = walletTransactionRepository;
+        this.messagingTemplate = messagingTemplate;
     }
+
 
     // Request a session (Seeker requests)
     @PostMapping("/request")
@@ -394,7 +400,16 @@ public class SessionController {
                 session.setDurationSeconds(Duration.between(session.getStartTime(), session.getEndTime()).toSeconds());
             }
             sessionRepository.save(session);
+            
+            // Broadcast real-time call end event to both seeker and advisor
+            try {
+                ChatMessage endMsg = new ChatMessage(id, "system", "system", "System", "SESSION_ENDED");
+                messagingTemplate.convertAndSend("/topic/chat/" + id, endMsg);
+            } catch (Exception e) {
+                // log and continue
+            }
         }
+
 
         return ResponseEntity.ok(session);
     }
