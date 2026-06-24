@@ -60,7 +60,7 @@ public class WebSecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/error").permitAll()
+                .requestMatchers("/api/auth/**", "/api/isAlive", "/error").permitAll()
                 .requestMatchers("/ws/**").permitAll() // WebSocket endpoint
                 .requestMatchers("/api/colleges/public/**").permitAll()
                 .requestMatchers("/api/advisors/public/**").permitAll()
