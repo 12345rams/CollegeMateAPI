@@ -30,11 +30,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // SockJS fallback options
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(frontendUrl)
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
 
         // Native websocket endpoint (without SockJS wrapper)
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(frontendUrl);
+                .setAllowedOriginPatterns("*");
     }
 }
