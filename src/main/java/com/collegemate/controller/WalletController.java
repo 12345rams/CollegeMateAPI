@@ -59,6 +59,7 @@ public class WalletController {
             response.put("orderId", order.get("id"));
             response.put("amount", order.get("amount"));
             response.put("currency", order.get("currency"));
+            response.put("keyId", razorpayKeyId);
 
             return ResponseEntity.ok(response);
         } catch (RazorpayException e) {
