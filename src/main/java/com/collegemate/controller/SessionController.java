@@ -178,6 +178,16 @@ public class SessionController {
         }
 
         ConsultationSession saved = sessionRepository.save(session);
+
+        // Broadcast real-time status update to the seeker via WebSocket
+        try {
+            String eventType = accept ? "SESSION_ACCEPTED" : "SESSION_REJECTED";
+            ChatMessage statusMsg = new ChatMessage(id, "system", "system", "System", eventType);
+            messagingTemplate.convertAndSend("/topic/chat/" + id, statusMsg);
+        } catch (Exception e) {
+            // log and continue
+        }
+
         return ResponseEntity.ok(saved);
     }
 
