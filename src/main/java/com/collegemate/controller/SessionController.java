@@ -427,6 +427,22 @@ public class SessionController {
         return ResponseEntity.ok(session);
     }
 
+    // Get session by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSessionById(@PathVariable String id, Principal principal) {
+        Optional<ConsultationSession> sessionOpt = sessionRepository.findById(id);
+        if (sessionOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        ConsultationSession session = sessionOpt.get();
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!session.getSeekerId().equals(user.getId()) && !session.getAdvisorId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to view this session.");
+        }
+        return ResponseEntity.ok(session);
+    }
+
     // Get active session for user
     @GetMapping("/active")
     public ResponseEntity<?> getActiveSession(Principal principal) {
