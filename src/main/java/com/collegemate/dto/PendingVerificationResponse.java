@@ -14,6 +14,8 @@ public class PendingVerificationResponse {
     private String major;
     private int enrollmentYear;
     private double ratePerMinute;
+    private double chatRatePerMinute;
+    private double videoRatePerMinute;
     private String bio;
     private List<String> skills;
     private String verificationDoc;
@@ -25,6 +27,8 @@ public class PendingVerificationResponse {
         this.major = profile.getMajor();
         this.enrollmentYear = profile.getEnrollmentYear();
         this.ratePerMinute = profile.getRatePerMinute();
+        this.chatRatePerMinute = profile.getChatRatePerMinute();
+        this.videoRatePerMinute = profile.getVideoRatePerMinute();
         this.bio = profile.getBio();
         this.skills = profile.getSkills();
         this.verificationDoc = profile.getVerificationDoc();
@@ -58,6 +62,12 @@ public class PendingVerificationResponse {
 
     public double getRatePerMinute() { return ratePerMinute; }
     public void setRatePerMinute(double ratePerMinute) { this.ratePerMinute = ratePerMinute; }
+
+    public double getChatRatePerMinute() { return chatRatePerMinute; }
+    public void setChatRatePerMinute(double chatRatePerMinute) { this.chatRatePerMinute = chatRatePerMinute; }
+
+    public double getVideoRatePerMinute() { return videoRatePerMinute; }
+    public void setVideoRatePerMinute(double videoRatePerMinute) { this.videoRatePerMinute = videoRatePerMinute; }
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }

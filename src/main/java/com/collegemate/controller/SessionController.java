@@ -71,7 +71,9 @@ public class SessionController {
         }
 
         // Seeker must have enough balance for the selected duration
-        double upfrontCost = advisorProfile.getRatePerMinute() * selectedDurationMinutes;
+        SessionType sessionType = SessionType.valueOf(type.toUpperCase());
+        double rate = (sessionType == SessionType.CHAT) ? advisorProfile.getChatRatePerMinute() : advisorProfile.getVideoRatePerMinute();
+        double upfrontCost = rate * selectedDurationMinutes;
         if (seeker.getWalletBalance() < upfrontCost) {
             return ResponseEntity.badRequest().body("Insufficient wallet balance. Minimum balance needed: $" + String.format("%.2f", upfrontCost));
         }
@@ -346,7 +348,8 @@ public class SessionController {
                 response.put("walletBalance", seeker.getWalletBalance());
             } else {
                 // Extension is active. Charge pay-per-minute (pro-rated every 30s)
-                double chargeRate = advisorProfile.getRatePerMinute() / 2.0;
+                double rate = (session.getType() == SessionType.CHAT) ? advisorProfile.getChatRatePerMinute() : advisorProfile.getVideoRatePerMinute();
+                double chargeRate = rate / 2.0;
 
                 if (seeker.getWalletBalance() >= chargeRate) {
                     seeker.setWalletBalance(seeker.getWalletBalance() - chargeRate);

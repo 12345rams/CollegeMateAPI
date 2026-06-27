@@ -11,11 +11,15 @@ public class AdvisorProfile {
     @Id
     private String id;
     private String userId;
+    private String name;
     private String collegeId;
     private String collegeName;
+    private String collegeLocation;
     private String major;
     private int enrollmentYear;
     private double ratePerMinute;
+    private double chatRatePerMinute;
+    private double videoRatePerMinute;
     private String bio;
     private List<String> skills;
     private boolean isVerified;
@@ -31,6 +35,8 @@ public class AdvisorProfile {
         this.rating = 0.0;
         this.totalReviews = 0;
         this.ratePerMinute = 0.0;
+        this.chatRatePerMinute = 0.0;
+        this.videoRatePerMinute = 0.0;
     }
 
     public AdvisorProfile(String userId, String collegeId, String collegeName, String major, int enrollmentYear, double ratePerMinute, String bio) {
@@ -41,6 +47,8 @@ public class AdvisorProfile {
         this.major = major;
         this.enrollmentYear = enrollmentYear;
         this.ratePerMinute = ratePerMinute;
+        this.chatRatePerMinute = ratePerMinute;
+        this.videoRatePerMinute = ratePerMinute;
         this.bio = bio;
     }
 
@@ -57,6 +65,12 @@ public class AdvisorProfile {
     public String getCollegeName() { return collegeName; }
     public void setCollegeName(String collegeName) { this.collegeName = collegeName; }
 
+    public String getCollegeLocation() { return collegeLocation; }
+    public void setCollegeLocation(String collegeLocation) { this.collegeLocation = collegeLocation; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
     public String getMajor() { return major; }
     public void setMajor(String major) { this.major = major; }
 
@@ -65,6 +79,12 @@ public class AdvisorProfile {
 
     public double getRatePerMinute() { return ratePerMinute; }
     public void setRatePerMinute(double ratePerMinute) { this.ratePerMinute = ratePerMinute; }
+
+    public double getChatRatePerMinute() { return chatRatePerMinute > 0 ? chatRatePerMinute : ratePerMinute; }
+    public void setChatRatePerMinute(double chatRatePerMinute) { this.chatRatePerMinute = chatRatePerMinute; }
+
+    public double getVideoRatePerMinute() { return videoRatePerMinute > 0 ? videoRatePerMinute : ratePerMinute; }
+    public void setVideoRatePerMinute(double videoRatePerMinute) { this.videoRatePerMinute = videoRatePerMinute; }
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }

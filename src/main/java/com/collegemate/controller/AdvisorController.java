@@ -86,11 +86,20 @@ public class AdvisorController {
 
         profile.setCollegeId(updateInput.getCollegeId());
         profile.setCollegeName(updateInput.getCollegeName());
+        profile.setCollegeLocation(updateInput.getCollegeLocation());
+        profile.setName(updateInput.getName());
         profile.setMajor(updateInput.getMajor());
         profile.setEnrollmentYear(updateInput.getEnrollmentYear());
         profile.setRatePerMinute(updateInput.getRatePerMinute());
+        profile.setChatRatePerMinute(updateInput.getChatRatePerMinute());
+        profile.setVideoRatePerMinute(updateInput.getVideoRatePerMinute());
         profile.setBio(updateInput.getBio());
         profile.setSkills(updateInput.getSkills());
+
+        if (updateInput.getName() != null && !updateInput.getName().trim().isEmpty()) {
+            user.setName(updateInput.getName());
+            userRepository.save(user);
+        }
 
         AdvisorProfile saved = advisorProfileRepository.save(profile);
         return ResponseEntity.ok(saved);
