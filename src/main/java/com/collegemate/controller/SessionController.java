@@ -433,9 +433,31 @@ public class SessionController {
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        Instant now = Instant.now();
         List<ConsultationSession> activeSessions = sessionRepository.findAll().stream()
-                .filter(s -> (s.getSeekerId().equals(user.getId()) || s.getAdvisorId().equals(user.getId()))
-                        && (s.getStatus() == SessionStatus.ACTIVE || s.getStatus() == SessionStatus.PENDING))
+                .filter(s -> (s.getSeekerId().equals(user.getId()) || s.getAdvisorId().equals(user.getId())))
+                .filter(s -> {
+                    if (s.getStatus() == SessionStatus.PENDING) {
+                        if (Duration.between(s.getCreatedAt(), now).toMinutes() > 15) {
+                            s.setStatus(SessionStatus.CANCELLED);
+                            sessionRepository.save(s);
+                            return false;
+                        }
+                        return true;
+                    }
+                    if (s.getStatus() == SessionStatus.ACTIVE) {
+                        Instant start = s.getStartTime() != null ? s.getStartTime() : s.getCreatedAt();
+                        if (Duration.between(start, now).toHours() > 2) {
+                            s.setStatus(SessionStatus.COMPLETED);
+                            s.setEndTime(now);
+                            sessionRepository.save(s);
+                            return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                })
+                .sorted((s1, s2) -> s2.getCreatedAt().compareTo(s1.getCreatedAt()))
                 .toList();
 
         if (activeSessions.isEmpty()) {
