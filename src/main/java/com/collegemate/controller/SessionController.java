@@ -220,7 +220,7 @@ public class SessionController {
 
         session.setStatus(SessionStatus.ACTIVE);
         session.setStartTime(Instant.now());
-        sessionRepository.save(session);
+        ConsultationSession saved = sessionRepository.save(session);
 
         // Log advisor earning
         WalletTransaction advisorTx = new WalletTransaction(
@@ -231,7 +231,15 @@ public class SessionController {
         );
         walletTransactionRepository.save(advisorTx);
 
-        return ResponseEntity.ok(session);
+        // Broadcast real-time status update to the seeker via WebSocket
+        try {
+            ChatMessage statusMsg = new ChatMessage(id, "system", "system", "System", "SESSION_ACCEPTED");
+            messagingTemplate.convertAndSend("/topic/chat/" + id, statusMsg);
+        } catch (Exception e) {
+            // log and continue
+        }
+
+        return ResponseEntity.ok(saved);
     }
 
     // Cancel a session request (Seeker cancels, refunds seeker)
